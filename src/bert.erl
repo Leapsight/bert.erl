@@ -11,13 +11,15 @@
 -include_lib("eunit/include/eunit.hrl").
 -endif.
 
+-define (T2B_OPTS, [{minor_version,1}]).
+
 %%---------------------------------------------------------------------------
 %% Public API
 
 -spec encode(term()) -> binary().
 
 encode(Term) ->
-  term_to_binary(encode_term(Term)).
+  term_to_binary(encode_term(Term), ?T2B_OPTS).
 
 -spec decode(binary()) -> term().
 
@@ -34,7 +36,7 @@ encode_term(Term) ->
     [] -> {bert, nil};
     true -> {bert, true};
     false -> {bert, false};
-    Dict when is_record(Term, dict, 8) ->
+    Dict when element(1, Dict) == dict ->
       {bert, dict, dict:to_list(Dict)};
     List when is_list(Term) ->
       lists:map((fun encode_term/1), List);
